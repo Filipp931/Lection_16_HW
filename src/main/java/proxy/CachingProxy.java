@@ -24,13 +24,15 @@ public class CachingProxy implements InvocationHandler {
      */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
         if(cache.contains(method, args)){
             System.out.println("Getting cash value from cash ");
-            return cache.getValue(method, args);
         } else {
+            System.out.println("Caching value");
             cache.cacheValue(method, args, method.invoke(delegate, args));
-            return cache.getValue(method, args);
         }
+
+        return cache.getValue(method, args);
     }
 
 }
