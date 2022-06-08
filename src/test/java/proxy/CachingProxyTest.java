@@ -6,9 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Proxy;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public class CachingProxyTest {
