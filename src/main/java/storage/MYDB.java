@@ -18,10 +18,28 @@ public class MYDB extends Source {
         System.out.println("Connecting to DB...");
         try {
             connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            createTableIfNotExists();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
+
+    private void createTableIfNotExists() {
+        String createStatement = "CREATE TABLE IF NOT EXISTS cache\n" +
+                "(\n" +
+                "    id     int  primary key,\n" +
+                "    method varchar(255) not null,\n" +
+                "    args   blob         null,\n" +
+                "    value  blob         not null\n" +
+                ");";
+        try(Statement statement = connection.createStatement())  {
+            statement.execute(createStatement);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+    }
+
     public static MYDB getInstance(){
         if(MYDB == null){
             synchronized (MYDB.class){
