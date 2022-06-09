@@ -19,10 +19,12 @@ public class CachingProxyTest {
                 cachingProxy);
     }
     @Test
-        public void CachingProxyTest() {
+        public void CachingProxySingleTest() {
         System.out.println(calculator.fibonacci(4));
         System.out.println(calculator.fibonacci(4));
         System.out.println(calculator.fibonacci(6));
     }
 
 }
+
+

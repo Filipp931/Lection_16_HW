@@ -61,11 +61,10 @@ public class MYDB extends Source {
 
     public Map<Method, HashMap<List<Object>, Object>> getCacheFromTable(List<Method> methods) throws SQLException {
         Map<Method, HashMap<List<Object>, Object>> result = new HashMap<>();
-        String statement = "SELECT * FROM cache";
+        String statement = "SELECT method, args, value FROM cache";
         try (Statement stmt = connection.createStatement()) {
             ResultSet resultSet = stmt.executeQuery(statement);
             while (resultSet.next()) {
-                resultSet.getInt("id");
                 String method = resultSet.getString("method");
                 Object[] args = (Object[]) readObjectFromBlob(resultSet.getBlob("args"));
                 Object value = readObjectFromBlob(resultSet.getBlob("value"));

@@ -6,6 +6,7 @@ import calculator.Calc;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 public class Cache {
@@ -44,7 +45,7 @@ public class Cache {
     }
 
     private Map<Method, HashMap<List<Object>, Object>> getCache(Method[] methods){
-        Map<Method, HashMap<List<Object>, Object>> result = new HashMap<>();
+        Map<Method, HashMap<List<Object>, Object>> result = new ConcurrentHashMap<>();
         scanMethods(methods);
         try {
             result = mydb.getCacheFromTable(methodsToCache);
