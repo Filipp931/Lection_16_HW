@@ -1,17 +1,19 @@
 package storage;
 
 import calculator.Cacheable;
+import calculator.Calc;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Cache {
     private final MYDB mydb = MYDB.getInstance();
     private final Map<Method, HashMap<List<Object>, Object>> cache;
     private List<Method> methodsToCache;
     public Cache(Object object) {
-        cache = getCache(object.getClass().getInterfaces()[0].getMethods());
+        cache = getCache(Arrays.stream(object.getClass().getInterfaces()).filter(Predicate.isEqual(Calc.class)).findAny().get().getDeclaredMethods());
     }
 
     public boolean contains(Method method, Object[] args){

@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.*;
 
 
-public class MYDB extends Source{
+public class MYDB extends Source {
    // private static final String JDBC_DRIVER = "org.h2.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/cache";
     private static final String USER = "root";
@@ -33,16 +33,24 @@ public class MYDB extends Source{
         return MYDB;
     }
 
+    public static void closeConnection(){
+        try {
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public Map<Method, HashMap<List<Object>, Object>> getCacheFromTable(List<Method> methods) throws SQLException {
         Map<Method, HashMap<List<Object>, Object>> result = new HashMap<>();
         String statement = "SELECT * FROM cache";
         try (Statement stmt = connection.createStatement()) {
             ResultSet resultSet = stmt.executeQuery(statement);
             while (resultSet.next()) {
-                int id = resultSet.getInt("id");
+                resultSet.getInt("id");
                 String method = resultSet.getString("method");
-                Object[] args = (Object[]) readObject(resultSet.getBlob("args"));
-                Object value = readObject(resultSet.getBlob("value"));
+                Object[] args = (Object[]) readObjectFromBlob(resultSet.getBlob("args"));
+                Object value = readObjectFromBlob(resultSet.getBlob("value"));
                 putToCache(result, methods, method, args, value);
             }
         }
@@ -57,15 +65,11 @@ public class MYDB extends Source{
             cache.put(realMethod, new HashMap<>(){{put(Arrays.asList(args), value);}});
         }
     }
-    private Object readObject(Blob blob){
+    private Object readObjectFromBlob(Blob blob){
         Object result = null;
         try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(blob.getBinaryStream()))) {
             result = ois.readObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
         return result;
@@ -81,11 +85,7 @@ public class MYDB extends Source{
         }
     }
 
-    /**
-     * получение сериализованного объекта в виде blob
-     * @param obj
-     * @return
-     */
+
     private Blob writeToBlob(Object obj) throws SQLException {
         Blob result = connection.createBlob();
         try (ObjectOutputStream ous = new ObjectOutputStream(new BufferedOutputStream(result.setBinaryStream(1)))) {
